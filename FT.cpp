@@ -215,7 +215,7 @@ void FT::FFT(double ** pFreqReal, double ** pFreqImag, int ** InputImage, int h,
 			real[j] = pFreqReal[i][j];
 			imag[j] = pFreqImag[i][j];
 		}
-		FFT1D(real, imag, h, w);
+		FFT1D(real,imag,h, w);
 		for (int j = 0; j < M; j++)
 		{
 			 pFreqReal[i][j]= real[j];
@@ -223,22 +223,22 @@ void FT::FFT(double ** pFreqReal, double ** pFreqImag, int ** InputImage, int h,
 		}
 	}
 
-	for (int i = 0; i < N; i++)
-	{
-		for (int j = 0; j < M; j++)
-		{
-			real[j] = pFreqReal[j][i];
-			imag[j] = pFreqImag[j][i];
-		}
-		FFT1D(real, imag, h, w);
-		for (int j = 0; j < M; j++)
-		{
-			pFreqReal[j][i] = real[j];
-			pFreqImag[j][i] = imag[j];
-		}
-	}
+	//for (int i = 0; i < N; i++)
+	//{
+	//	for (int j = 0; j < M; j++)
+	//	{
+	//		real[j] = pFreqReal[j][i];
+	//		imag[j] = pFreqImag[j][i];
+	//	}
+	//	FFT1D(real, imag, h, w);
+	//	for (int j = 0; j < M; j++)
+	//	{
+	//		pFreqReal[j][i] = real[j];
+	//		pFreqImag[j][i] = imag[j];
+	//	}
+	//}
 
-	delete[] real;
+	delete[]real;
 	delete[]imag;
 	
 }
@@ -274,6 +274,7 @@ void FT::FFT1D(double * pFreqReal, double * pFreqImag, int h, int w)
 			u1 = z;
 		}
 		c2 = std::sqrt((1.0-c1)/2.0)*-1;
+		c1 = std::sqrt((1.0 + c1) / 2.0);
 	}
 
 	for (int i = 0; i <h; i++)
@@ -282,6 +283,43 @@ void FT::FFT1D(double * pFreqReal, double * pFreqImag, int h, int w)
 		pFreqImag[i] /= (double)h;
 	}
 
+}
+
+void FT::iFFT1D(double * pFreqReal, double * pFreqImag, int h, int w)
+{
+	//reverse bit
+	bitreversal(pFreqReal, pFreqImag, h, w);
+	//FFT 
+	int m = log2(h);
+	int c1 = -1, c2 = 0, step = 1;
+
+	for (int i = 0; i < m; i++)
+	{
+		int l = step;
+		step <<= 1;
+		int u1 = 1, u2 = 0;
+		for (int j = 0; j < l; j++)
+		{
+			for (int k = j; k < h; k += step)
+			{
+				int place = k + l;
+				int t1 = u1 * pFreqReal[place] - u2 * pFreqImag[place];
+				int t2 = u1 * pFreqImag[place] + u2 * pFreqReal[place];
+				pFreqReal[place] = pFreqReal[k] - t1;
+				pFreqImag[place] = pFreqImag[k] - t2;
+				pFreqReal[k] += t1;
+				pFreqImag[k] += t2;
+
+			}
+			int z = u1 * c1 - u2 * c2;
+			u2 = u1 * c2 + u2 * c1;
+			u1 = z;
+		}
+		c2 = std::sqrt((1.0 - c1) / 2.0);
+		c1= std::sqrt((1.0 + c1) / 2.0);
+	}
+
+	
 }
 
 void FT::bitreversal(double * pFreqReal, double * pFreqImag, int h, int w)
@@ -300,10 +338,106 @@ void FT::bitreversal(double * pFreqReal, double * pFreqImag, int h, int w)
 
 void FT::InverseFastFourierTransform(int ** InputImage, int ** OutputImage, double ** FreqReal, double ** FreqImag, int h, int w)
 {
+	int M = h;
+	int N = w;
+
+	double** InverseReal = new double*[M];
+	double** InverseImag = new double*[M];
+	double** pFreq = new double*[M];
+
+	for (int i = 0; i < M; i++)
+	{
+		InverseReal[i] = new double[N];
+		InverseImag[i] = new double[N];
+		pFreq[i] = new double[N]; // 傅立葉頻率陣列
+	}
+
+	for (int i = 0; i < M; i++)
+	{
+		for (int j = 0; j < N; j++)
+		{
+			InverseReal[i][j] = 0.0f;
+			InverseImag[i][j] = 0.0f;
+			pFreq[i][j] = 0.0f;
+		}
+	}
+	//-------------------------------------------
+	for (int i = 0; i < M; i++)
+	{
+		for (int j = 0; j < N; j++)
+		{
+			InverseFFT(InverseReal, InverseImag, FreqReal, FreqImag, M, N, j, i);
+		}
+	}
+	for (int i = 0; i < M; i++)
+	{
+		for (int j = 0; j < N; j++)
+		{
+			// 將計算好的傅立葉實數與虛數部分作結合 
+			pFreq[i][j] = sqrt(pow(InverseReal[i][j], (double) 2.0) + pow(InverseImag[i][j], (double) 2.0));
+			// 結合後之頻率域丟入影像陣列中顯示 
+			OutputImage[i][j] = pFreq[i][j];
+			//存下反傅立葉實數與虛數部分
+			FreqReal[i][j] = InverseReal[i][j];
+			FreqImag[i][j] = InverseImag[i][j];
+
+		}
+	}
+	//-------------------------------------------
+	for (int i = 0; i < M; i++)
+	{
+		delete[] pFreq[i];
+		delete[] InverseReal[i];
+		delete[] InverseImag[i];
+
+	}
+	delete[] pFreq;
+	delete[] InverseReal;
+	delete[] InverseImag;
+
 }
 
 void FT::InverseFFT(double ** InverseReal, double ** InverseImag, double ** pFreqReal, double ** pFreqImag, int h, int w, int x, int y)
 {
+	int N = h;
+	int M = w;
+	//N=M 且 必須為 2的幂次方
+	double *real = new double[w];
+	double *imag = new double[w];
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = 0; j < M; j++)
+		{
+			real[j] = pFreqReal[i][j];
+			imag[j] = pFreqImag[i][j];
+		}
+		iFFT1D(real, imag, h, w);
+		for (int j = 0; j < M; j++)
+		{
+			pFreqReal[i][j] = real[j];
+			pFreqImag[i][j] = imag[j];
+		}
+	}
+	InverseReal = pFreqReal;
+	InverseImag = pFreqImag;
+	//for (int i = 0; i < N; i++)
+	//{
+	//	for (int j = 0; j < M; j++)
+	//	{
+	//		real[j] = pFreqReal[j][i];
+	//		imag[j] = pFreqImag[j][i];
+	//	}
+	//	FFT1D(real, imag, h, w);
+	//	for (int j = 0; j < M; j++)
+	//	{
+	//		pFreqReal[j][i] = real[j];
+	//		pFreqImag[j][i] = imag[j];
+	//	}
+	//}
+
+	delete[]real;
+	delete[]imag;
+
 }
 
 
