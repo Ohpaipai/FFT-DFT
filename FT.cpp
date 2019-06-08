@@ -1,4 +1,4 @@
-ï»¿#include "FT.h"
+#include "FT.h"
 
 FT::FT()
 {
@@ -10,13 +10,13 @@ void FT::DiscreteFourierTransform(int** InputImage, int** OutputImage, double **
 	int N = w;
 
 	double** pFreq = new double*[M];
-	for (int newcnt = 0; newcnt<M; newcnt++)
+	for (int newcnt = 0; newcnt < M; newcnt++)
 	{
-		pFreq[newcnt] = new double[N]; // å‚…ç«‹è‘‰é »çŽ‡é™£åˆ—
+		pFreq[newcnt] = new double[N]; // ³Å¥ß¸­ÀW²v°}¦C
 	}
-	for (int forzero_i = 0; forzero_i<M; forzero_i++)
+	for (int forzero_i = 0; forzero_i < M; forzero_i++)
 	{
-		for (int forzero_j = 0; forzero_j<N; forzero_j++)
+		for (int forzero_j = 0; forzero_j < N; forzero_j++)
 		{
 			pFreq[forzero_i][forzero_j] = 0.0f;
 		}
@@ -26,16 +26,16 @@ void FT::DiscreteFourierTransform(int** InputImage, int** OutputImage, double **
 	{
 		for (int j = 0; j < N; j++)
 		{
-			DFT(FreqReal, FreqImag, InputImage,M, N, j, i);
+			DFT(FreqReal, FreqImag, InputImage, M, N, j, i);
 		}
 	}
 	for (int i = 0; i < M; i++)
 	{
 		for (int j = 0; j < N; j++)
 		{
-			// å°‡è¨ˆç®—å¥½çš„å‚…ç«‹è‘‰å¯¦æ•¸èˆ‡è™›æ•¸éƒ¨åˆ†ä½œçµåˆ 
+			// ±N­pºâ¦nªº³Å¥ß¸­¹ê¼Æ»Pµê¼Æ³¡¤À§@µ²¦X 
 			pFreq[i][j] = sqrt(pow(FreqReal[i][j], (double) 2.0) + pow(FreqImag[i][j], (double) 2.0));
-			// çµåˆå¾Œä¹‹é »çŽ‡åŸŸä¸Ÿå…¥å½±åƒé™£åˆ—ä¸­é¡¯ç¤º 
+			// µ²¦X«á¤§ÀW²v°ì¥á¤J¼v¹³°}¦C¤¤Åã¥Ü 
 			OutputImage[i][j] = pFreq[i][j];
 		}
 	}
@@ -49,20 +49,20 @@ void FT::DiscreteFourierTransform(int** InputImage, int** OutputImage, double **
 
 void FT::DFT(double ** pFreqReal, double ** pFreqImag, int ** InputImage, int h, int w, int u, int v)
 {
-	// M = N å¿…é ˆæ˜¯æ–¹é™£
+	// M = N ¥²¶·¬O¤è°}
 	int M = h;
 	int N = w;
-	
+
 	for (int y = 0; y < M; y++)
 	{
 		for (int x = 0; x < N; x++)
 		{
-			// å¯å…ˆè¨ˆç®—Eular's equation e^{j*theta} = cos{theta}+j*sin{theta}			
-			double angleDFT = (-1.0f * 2.0f * 3.14159 * (double)(u*x + v*y) / (double)M);
+			// ¥i¥ý­pºâEular's equation e^{j*theta} = cos{theta}+j*sin{theta}			
+			double angleDFT = (-1.0f * 2.0f * 3.14159 * (double)(u*x + v * y) / (double)M);
 			double c = cos(angleDFT);
 			double s = sin(angleDFT);
 
-			// åˆ©ç”¨Eular's equationè¨ˆç®—å‚…ç«‹è‘‰ä¹‹å¯¦è™›æ•¸éƒ¨åˆ†
+			// §Q¥ÎEular's equation­pºâ³Å¥ß¸­¤§¹êµê¼Æ³¡¤À
 			pFreqReal[u][v] += (double)InputImage[y][x] * c;
 			pFreqImag[u][v] -= (double)InputImage[y][x] * s;
 		}
@@ -81,16 +81,16 @@ void FT::InverseDiscreteFourierTransform(int ** InputImage, int ** OutputImage, 
 	double** InverseImag = new double*[M];
 	double** pFreq = new double*[M];
 
-	for (int i = 0; i<M; i++)
+	for (int i = 0; i < M; i++)
 	{
 		InverseReal[i] = new double[N];
 		InverseImag[i] = new double[N];
-		pFreq[i] = new double[N]; // å‚…ç«‹è‘‰é »çŽ‡é™£åˆ—
+		pFreq[i] = new double[N]; // ³Å¥ß¸­ÀW²v°}¦C
 	}
 
-	for (int i = 0; i<M; i++)
+	for (int i = 0; i < M; i++)
 	{
-		for (int j = 0; j<N; j++)
+		for (int j = 0; j < N; j++)
 		{
 			InverseReal[i][j] = 0.0f;
 			InverseImag[i][j] = 0.0f;
@@ -102,18 +102,18 @@ void FT::InverseDiscreteFourierTransform(int ** InputImage, int ** OutputImage, 
 	{
 		for (int j = 0; j < N; j++)
 		{
-			InverseDFT(InverseReal, InverseImag,FreqReal, FreqImag, M, N, j, i);
+			InverseDFT(InverseReal, InverseImag, FreqReal, FreqImag, M, N, j, i);
 		}
 	}
 	for (int i = 0; i < M; i++)
 	{
 		for (int j = 0; j < N; j++)
 		{
-			// å°‡è¨ˆç®—å¥½çš„å‚…ç«‹è‘‰å¯¦æ•¸èˆ‡è™›æ•¸éƒ¨åˆ†ä½œçµåˆ 
+			// ±N­pºâ¦nªº³Å¥ß¸­¹ê¼Æ»Pµê¼Æ³¡¤À§@µ²¦X 
 			pFreq[i][j] = sqrt(pow(InverseReal[i][j], (double) 2.0) + pow(InverseImag[i][j], (double) 2.0));
-			// çµåˆå¾Œä¹‹é »çŽ‡åŸŸä¸Ÿå…¥å½±åƒé™£åˆ—ä¸­é¡¯ç¤º 
+			// µ²¦X«á¤§ÀW²v°ì¥á¤J¼v¹³°}¦C¤¤Åã¥Ü 
 			OutputImage[i][j] = pFreq[i][j];
-			//å­˜ä¸‹åå‚…ç«‹è‘‰å¯¦æ•¸èˆ‡è™›æ•¸éƒ¨åˆ†
+			//¦s¤U¤Ï³Å¥ß¸­¹ê¼Æ»Pµê¼Æ³¡¤À
 			FreqReal[i][j] = InverseReal[i][j];
 			FreqImag[i][j] = InverseImag[i][j];
 
@@ -135,7 +135,7 @@ void FT::InverseDiscreteFourierTransform(int ** InputImage, int ** OutputImage, 
 
 void FT::InverseDFT(double ** InverseReal, double ** InverseImag, double ** pFreqReal, double ** pFreqImag, int h, int w, int x, int y)
 {
-	// M = N å¿…é ˆæ˜¯æ–¹é™£
+	// M = N ¥²¶·¬O¤è°}
 	int M = h;
 	int N = w;
 
@@ -143,12 +143,12 @@ void FT::InverseDFT(double ** InverseReal, double ** InverseImag, double ** pFre
 	{
 		for (int u = 0; u < N; u++)
 		{
-			// å¯å…ˆè¨ˆç®—Eular's equation e^{j*theta} = cos{theta}+j*sin{theta}			
-			double angleIDFT = (2.0f * 3.14159 * (double)(u*x + v*y) / (double)M);
+			// ¥i¥ý­pºâEular's equation e^{j*theta} = cos{theta}+j*sin{theta}			
+			double angleIDFT = (2.0f * 3.14159 * (double)(u*x + v * y) / (double)M);
 			double c = cos(angleIDFT);
 			double s = sin(angleIDFT);
 
-			// åˆ©ç”¨Eular's equationè¨ˆç®—å‚…ç«‹è‘‰ä¹‹å¯¦è™›æ•¸éƒ¨åˆ†
+			// §Q¥ÎEular's equation­pºâ³Å¥ß¸­¤§¹êµê¼Æ³¡¤À
 			InverseReal[x][y] += (pFreqReal[v][u] * c - pFreqImag[v][u] * s);
 			InverseImag[x][y] += (pFreqReal[v][u] * s + pFreqImag[v][u] * c);
 		}
@@ -159,366 +159,218 @@ void FT::InverseDFT(double ** InverseReal, double ** InverseImag, double ** pFre
 
 void FT::FastFourierTransform(int ** InputImage, int ** OutputImage, double ** FreqReal, double ** FreqImag, int h, int w)
 {
-	//M&Nå¿…é ˆæ˜¯æ–¹é™£
-	int M = h;
-	int N = w;
-	int b = M * N;
-	double** pFreq = new double*[M];
-	//double *imageReal = new double[b];
-	//double *imageImag = new double[b];
-	double *pfReal = new double[w];
-	double *pfImag = new double[w];
-	for (int newcnt = 0; newcnt < M; newcnt++)
+	double** pFreq = new double*[h];
+	for (int newcnt = 0; newcnt < h; newcnt++)
 	{
-		pFreq[newcnt] = new double[N]; // å‚…ç«‹è‘‰é »çŽ‡é™£åˆ—
+		pFreq[newcnt] = new double[w]; // ³Å¥ß¸­ÀW²v°}¦C
 	}
-	for (int forzero_i = 0; forzero_i < M; forzero_i++)
-	{
-		for (int forzero_j = 0; forzero_j < N; forzero_j++)
-		{
-			pFreq[forzero_i][forzero_j] = 0.0f;
-			FreqReal[forzero_i][forzero_j] = InputImage[forzero_i][forzero_j];
-			FreqImag[forzero_i][forzero_j] = 0.0;
-		}
-	}
-	//-------------------------------------------
-	//row FFT
-	for (int i = 0; i < h; i++)
-	{
-		/*for (int j = 0; j < w; j++)
-		{
-			pfReal[j] = FreqReal[i][j];
-			pfImag[j] = FreqImag[i][j];
-		}*/
-		FFT1D(FreqReal[i], FreqImag[i],h,w);
-		/*for (int j = 0; j < w; j++)
-		{
-			FreqReal[i][j] = pfReal[j];
-			FreqImag[i][j] = pfImag[j];
-		}*/
-	}
-	//column FFT
+
 	for (int i = 0; i < h; i++)
 	{
 		for (int j = 0; j < w; j++)
 		{
-			pfReal[j] = FreqReal[j][i];
-			pfImag[j] = FreqImag[j][i];
-		}
-		FFT1D(pfReal, pfImag, h, w);
-		for (int j = 0; j < w; j++)
-		{
-			FreqReal[j][i] = pfReal[j];
-			FreqImag[j][i] = pfImag[j];
+			FreqReal[i][j] = InputImage[i][j];
+			FreqImag[i][j] = 0.0;
+			pFreq[i][j] = 0;
 		}
 	}
-	//for (int i = 0; i < b; i++)
-	//{
-	//	FreqReal[i / w][i%w] = pfReal[i];
-	//	FreqImag[i / w][i%w] = pfImag[i];
-	//}
-	//////////////////////////////////////////////
-	for (int i = 0; i < M; i++)
+
+	//row
+	for (int i = 0; i < h; i++)
 	{
-		for (int j = 0; j < N; j++)
+
+		IORFFT1D_forwrow(FreqReal, FreqImag, w, i,false);
+	}
+
+	// column
+	for (int i = 0; i < w; i++)
+	{
+		IORFFT1D_forcolumn(FreqReal, FreqImag, h, i,false);
+
+	}
+
+	//
+	for (int i = 0; i < h; i++)
+	{
+		for (int j = 0; j < w; j++)
 		{
-			// å°‡è¨ˆç®—å¥½çš„å‚…ç«‹è‘‰å¯¦æ•¸èˆ‡è™›æ•¸éƒ¨åˆ†ä½œçµåˆ 
-			pFreq[i][j] = sqrt(pow(FreqReal[i][j], (double) 2.0) + pow(FreqImag[i][j], (double) 2.0));
-			// çµåˆå¾Œä¹‹é »çŽ‡åŸŸä¸Ÿå…¥å½±åƒé™£åˆ—ä¸­é¡¯ç¤º 
+			pFreq[i][j] = sqrt(pow(FreqReal[j][i], 2.0) + pow(FreqImag[j][i], 2.0)) * w;
 			OutputImage[i][j] = pFreq[i][j];
 		}
 	}
-	//-------------------------------------------
-	for (int delcnt = 0; delcnt < M; delcnt++)
-	{
-		delete[] pFreq[delcnt];
-	}
-	delete[] pFreq;
-	delete[] pfReal;
-	delete[] pfImag;
 }
 
 void FT::FFT(double ** pFreqReal, double ** pFreqImag, int ** InputImage, int h, int w, int u, int v)
 {
-	int N = h;
-	int M = w;
-	//N=M ä¸” å¿…é ˆç‚º 2çš„å¹‚æ¬¡æ–¹
-	double *real = new double[w];
-	double *imag = new double[w];
-	for (int i = 0; i < N; i++)
-	{
-		for (int j = 0; j < M; j++)
-		{
-			real[j] = pFreqReal[i][j];
-			imag[j] = pFreqImag[i][j];
-		}
-		FFT1D(real,imag,h, w);
-		for (int j = 0; j < M; j++)
-		{
-			 pFreqReal[i][j]= real[j];
-			 pFreqImag[i][j]= imag[j];
-		}
-	}
-
-	//for (int i = 0; i < N; i++)
-	//{
-	//	for (int j = 0; j < M; j++)
-	//	{
-	//		real[j] = pFreqReal[j][i];
-	//		imag[j] = pFreqImag[j][i];
-	//	}
-	//	FFT1D(real, imag, h, w);
-	//	for (int j = 0; j < M; j++)
-	//	{
-	//		pFreqReal[j][i] = real[j];
-	//		pFreqImag[j][i] = imag[j];
-	//	}
-	//}
-
-	delete[]real;
-	delete[]imag;
-	
 }
 
-void FT::FFT1D(double * pFreqReal, double * pFreqImag, int h, int w)
+void FT::IORFFT1D_forwrow(double ** pFreqReal, double ** pFreqImag, int columnsize, const int row,bool INVERSE)
 {
-	//reverse bit
-	bitreversal(pFreqReal, pFreqImag, h, w);
-	//FFT 
-	int r = log2(h);
-	double *wreal = new double[h / 2];
-	double *wimag = new double[h / 2];
-	double *Rreal = new double[h];
-	double *Rimag = new double[h];
-	//wn
-	for (int i = 0; i < (h/2); i++)
+
+	std::complex<double>*x = new std::complex<double>[columnsize];
+	for (int i = 0; i < columnsize; i++)
 	{
-		double angle = -i * pi* 2/ h;
-		wreal[i] = cos(angle);
-		wimag[i] = sin(angle);
+		std::complex<double>tem(pFreqReal[row][i], pFreqImag[row][i]);
+		x[i] = tem;
 	}
-	//butterfly
-	for (int i = 0; i < r; i++)
+	bitreversal(x, columnsize);
+
+	for (int k = 2; k <= columnsize; k *= 2)
 	{
-		int step = 1 << i;
-		int halfN = 1 << (r - i);
-		//æ¯çµ„
-		for (int j = 0; j < step; j++)
+		double w;
+		if(INVERSE==true)
+			 w= 2.0 * 3.1415926 / k;
+		else
+			 w = -2.0 * 3.1415926 / k;
+		std::complex<double> dtheata(cos(w), sin(w));
+		for (int j = 0; j < columnsize; j += k)
 		{
-			int g = j * halfN;
-			//æ¯å€‹é»ž
-			for (int k = 0; k < halfN/2; k++)
+			std::complex<double> theata(1.0, 0.0);
+			for (int i = j; i < (j + k / 2); i++)
 			{
-				//è¶åž‹é‹ç®—
-				Rreal[k + g] = pFreqReal[k + g] + pFreqReal[k + g + halfN / 2];
-				Rimag[k + g] = pFreqImag[k + g] + pFreqImag[k + g + halfN / 2];
-				Rreal[k + halfN / 2 + g] = pFreqReal[k + g] - pFreqReal[k + g + halfN / 2] * wreal[k*step] + pFreqImag[k + g + halfN / 2] * wimag[k*step];
-				Rimag[k + halfN / 2 + g]=pFreqImag[k+g]+ pFreqImag[k + g + halfN / 2]*wreal[k*step]+pFreqReal[k + g + halfN / 2] * wimag[k*step];
+				std::complex<double> a = x[i],
+					b = x[i + k / 2] * theata;
+				x[i] = a + b;
+				x[i + k / 2] = a - b;
+				theata *= dtheata;
 			}
 		}
+	}
 
-	}
-	for (int i = 0; i < h; i++)
-	{
-		pFreqImag[i] = wimag[i];
-		pFreqReal[i] = wreal[i];
-	}
-	/*int m = log2(h);
-	int c1 = -1, c2 = 0,step=1;
-	
-	for (int i = 0; i < m; i++)
-	{
-		int l = step;
-		step <<= 1;
-		int u1 = 1, u2 = 0;
-		for (int j = 0; j <l; j++)
+	if (INVERSE==true)
+		for (int i = 0; i < columnsize; i++)
 		{
-			for (int k = j; k < h; k += step)
-			{
-				int place = k + l;
-				int t1 = u1 * pFreqReal[place] - u2 * pFreqImag[place];
-				int t2 = u1 * pFreqImag[place] + u2 * pFreqReal[place];
-				pFreqReal[place] = pFreqReal[k] - t1;
-				pFreqImag[place] = pFreqImag[k] - t2;
-				pFreqReal[k] += t1;
-				pFreqImag[k] += t2;
 
-			}
-			int z = u1 * c1 - u2 * c2;
-			u2 = u1 * c2 + u2 * c1;
-			u1 = z;
+			pFreqReal[row][i] = x[i].real() ;
+			pFreqImag[row][i] = x[i].imag() ;
 		}
-		c2 = std::sqrt((1.0-c1)/2.0)*-1;
-		c1 = std::sqrt((1.0 + c1) / 2.0);
-	}
+	else
+		for (int i = 0; i < columnsize; i++)
+		{
 
-	for (int i = 0; i <h; i++)
-	{
-		pFreqReal[i] /= (double)h;
-		pFreqImag[i] /= (double)h;
-	}
-*/
+			pFreqReal[row][i] = x[i].real() / columnsize;
+			pFreqImag[row][i] = x[i].imag() / columnsize;
+
+		}
+
 }
 
-
-
-void FT::bitreversal(double * pFreqReal, double * pFreqImag, int h, int w)
+void FT::IORFFT1D_forcolumn(double ** pFreqReal, double ** pFreqImag, int rowsize, const int column, bool INVERSE)
 {
-	for (int i = 1,j=0; i <h; i++)
+
+	std::complex<double>*x = new std::complex<double>[rowsize];
+	for (int i = 0; i < rowsize; i++)
 	{
-		for (int k = h >> 1; !((j ^= k)&k); k >>= 1)
+		std::complex<double>tem(pFreqReal[i][column], pFreqImag[i][column]);
+		x[i] = tem;
+	}
+	bitreversal(x, rowsize);
+
+	for (int k = 2; k <= rowsize; k *= 2)
+	{
+		double w;
+		if (INVERSE == true)
+			w = 2.0 * 3.1415926 / k;
+		else
+			w = -2.0 * 3.1415926 / k;
+		std::complex<double> dtheata(cos(w), sin(w));
+		for (int j = 0; j < rowsize; j += k)
 		{
-			if (i > j) {
-				std::swap(pFreqReal[i],pFreqReal[j]);
-				std::swap(pFreqImag[i], pFreqImag[j]);
+			std::complex<double> theata(1.0, 0.0);
+			for (int i = j; i < (j + k / 2); i++)
+			{
+				std::complex<double> a = x[i],
+					b = x[i + k / 2] * theata;
+				x[i] = a + b;
+				x[i + k / 2] = a - b;
+				theata *= dtheata;
 			}
 		}
 	}
+	if(INVERSE==true)
+		for (int i = 0; i < rowsize; i++)
+		{
+
+			pFreqReal[i][column] = x[i].real() ;
+			pFreqImag[i][column] = x[i].imag() ;
+
+		}
+	else
+		for (int i = 0; i < rowsize; i++)
+		{
+
+			pFreqReal[i][column] = x[i].real() / rowsize;
+			pFreqImag[i][column] = x[i].imag() / rowsize;
+
+		}
+
+
 }
 
 void FT::InverseFastFourierTransform(int ** InputImage, int ** OutputImage, double ** FreqReal, double ** FreqImag, int h, int w)
 {
-	int M = h;
-	int N = w;
-	double *pfReal = new double[w];
-	double *pfImag = new double[w];
-	double** InverseReal = new double*[M];
-	double** InverseImag = new double*[M];
-	double** pFreq = new double*[M];
+	
+	double** InverseReal = new double*[h];
+	double** InverseImag = new double*[h];
+	double** pFreq = new double*[w];
 
-	for (int i = 0; i < M; i++)
+	for (int i = 0; i < h; i++)
 	{
-		InverseReal[i] = new double[N];
-		InverseImag[i] = new double[N];
-		pFreq[i] = new double[N]; // å‚…ç«‹è‘‰é »çŽ‡é™£åˆ—
+		InverseReal[i] = new double[w];
+		InverseImag[i] = new double[w];
+		pFreq[i] = new double[w]; // ³Å¥ß¸­ÀW²v°}¦C
 	}
 
-	for (int i = 0; i < M; i++)
+	for (int i = 0; i < h; i++)
 	{
-		for (int j = 0; j < N; j++)
+		for (int j = 0; j < w; j++)
 		{
 			InverseReal[i][j] = 0.0f;
 			InverseImag[i][j] = 0.0f;
 			pFreq[i][j] = 0.0f;
 		}
 	}
-	//-------------------------------------------
-	//row IFFT
+	//row
+	for (int i = 0; i <h; i++)
+	{
+		
+		IORFFT1D_forwrow(FreqReal, FreqImag, h, i, true);
+	}
+
+	//column
+	for (int i = 0; i < w; i++)
+	{
+		
+		IORFFT1D_forcolumn(FreqReal, FreqImag, w, i, true);
+	}
+	
 	for (int i = 0; i < h; i++)
 	{
 		for (int j = 0; j < w; j++)
 		{
-			pfReal[j] = FreqReal[i][j];
-			pfImag[j] = FreqImag[i][j];
-		}
-		iFFT1D(pfReal, pfImag, h, w);
-		for (int j = 0; j < w; j++)
-		{
-			FreqReal[i][j] = pfReal[j];
-			FreqImag[i][j] = pfImag[j];
-		}
-	}
-	//column IFFT
-	for (int i = 0; i < h; i++)
-	{
-		for (int j = 0; j < w; j++)
-		{
-			pfReal[j] = FreqReal[j][i];
-			pfImag[j] = FreqImag[j][i];
-		}
-		iFFT1D(pfReal, pfImag, h, w);
-		for (int j = 0; j < w; j++)
-		{
-			FreqReal[j][i] = pfReal[j];
-			FreqImag[j][i] = pfImag[j];
-		}
-	}
-
-
-	for (int i = 0; i < M; i++)
-	{
-		for (int j = 0; j < N; j++)
-		{
-			// å°‡è¨ˆç®—å¥½çš„å‚…ç«‹è‘‰å¯¦æ•¸èˆ‡è™›æ•¸éƒ¨åˆ†ä½œçµåˆ 
-			//pFreq[i][j] = sqrt(pow(InverseReal[i][j], (double) 2.0) + pow(InverseImag[i][j], (double) 2.0));
-			pFreq[i][j] = sqrt(pow(FreqReal[i][j], (double) 2.0) + pow(FreqImag[i][j], (double) 2.0));
-			// çµåˆå¾Œä¹‹é »çŽ‡åŸŸä¸Ÿå…¥å½±åƒé™£åˆ—ä¸­é¡¯ç¤º 
+			pFreq[i][j] = sqrt(pow(FreqReal[i][j], 2.0) + pow(FreqImag[i][j], 2.0));
 			OutputImage[i][j] = pFreq[i][j];
-			//å­˜ä¸‹åå‚…ç«‹è‘‰å¯¦æ•¸èˆ‡è™›æ•¸éƒ¨åˆ†
-			/*FreqReal[i][j] = InverseReal[i][j];
-			FreqImag[i][j] = InverseImag[i][j];*/
-
 		}
 	}
-	//-------------------------------------------
-	for (int i = 0; i < M; i++)
-	{
-		delete[] pFreq[i];
-		delete[] InverseReal[i];
-		delete[] InverseImag[i];
-
-	}
-	delete[] pFreq;
-	delete[] InverseReal;
-	delete[] InverseImag;
-
 }
 
 void FT::InverseFFT(double ** InverseReal, double ** InverseImag, double ** pFreqReal, double ** pFreqImag, int h, int w, int x, int y)
 {
-	int N = h;
-	int M = w;
-	//N=M ä¸” å¿…é ˆç‚º 2çš„å¹‚æ¬¡æ–¹
-	double *real = new double[w];
-	double *imag = new double[w];
-	for (int i = 0; i < N; i++)
-	{
-		for (int j = 0; j < M; j++)
-		{
-			real[j] = pFreqReal[i][j];
-			imag[j] = pFreqImag[i][j];
-		}
-		iFFT1D(real, imag, h, w);
-		for (int j = 0; j < M; j++)
-		{
-			InverseReal[i][j] = real[j];
-			InverseImag[i][j] = imag[j];
-		}
-	}
-	
-	//for (int i = 0; i < N; i++)
-	//{
-	//	for (int j = 0; j < M; j++)
-	//	{
-	//		real[j] = pFreqReal[j][i];
-	//		imag[j] = pFreqImag[j][i];
-	//	}
-	//	FFT1D(real, imag, h, w);
-	//	for (int j = 0; j < M; j++)
-	//	{
-	//		pFreqReal[j][i] = real[j];
-	//		pFreqImag[j][i] = imag[j];
-	//	}
-	//}
-
-	delete[]real;
-	delete[]imag;
-
 }
 
-void FT::iFFT1D(double * pFreqReal, double * pFreqImag, int h, int w)
+void FT::bitreversal(std::complex<double>*x, int size)
 {
-	//å…±è»›è¤‡æ•¸
-	for (int i = 0; i < h; i++)
+	for (int i = 1, j = 0; i < size; i++)
 	{
-		pFreqImag[i] *= -1;
+		for (int k = size / 2; !((j ^= k)&k); k /= 2);
+		if (i > j)
+		{
+			std::complex<double> temp = x[i];
+			x[i] = x[j];
+			x[j] = temp;
+		}
 	}
-	FFT1D(pFreqReal, pFreqImag, h, w);
-	for (int i = 0; i < h; i++)
-	{
-		pFreqReal[i] /= h;
-		pFreqImag[i] /= h;
-	}
+
 }
 
 
